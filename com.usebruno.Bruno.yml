@@ -12,12 +12,16 @@ finish-args:
   - --share=ipc
   - --device=dri
   - --filesystem=home
+    # lets git reach the host ssh-agent for SSH remotes
+  - --socket=ssh-auth
     # required to fix cursor scaling on wayland, especially with fractional scaling
   - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
 modules:
   - name: git
+    # keep /share/git-core/templates, which `git init` reads
     cleanup:
-      - /share
+      - /share/gitweb
+      - /share/locale
     make-args:
       - NO_PERL=1
       - NO_TCLTK=1
