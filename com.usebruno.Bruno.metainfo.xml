@@ -34,7 +34,39 @@
   </screenshots>
 
   <releases>
-    <release version="v4.3.0" date="2026-10-22"></release>
+    <release version="v4.3.0" date="2026-10-22">
+      <url type="details">https://github.com/usebruno/bruno/releases/tag/v4.3.0</url>
+      <description>
+        <p>Features</p>
+        <ul>
+          <li>Enhance OAuth2 token handling in processAuth function</li>
+          <li>Store runner payloads in the file store</li>
+          <li>Add a file store to the SQLite SDK</li>
+          <li>Revamp Create OpenAPI spec Modal</li>
+          <li>Show keyboard shortcut hints in menus</li>
+          <li>Add unresolved variables info card</li>
+          <li>Utils to measure over checkpoints, spans, and also drain them</li>
+          <li>Implement "Try" functionality for response examples</li>
+          <li>Open sidebar openapi specs as workspace tabs</li>
+          <li>Adds debounce on sidebar search</li>
+          <li>…and 21 more</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Fix git not found issue in flatpak package</li>
+          <li>Adding mock server to test</li>
+          <li>Adding permission request handler on apps</li>
+          <li>Make ignoredDirectories check case-insensitive</li>
+          <li>Auto save delay error check</li>
+          <li>Retry git metadata dir remove</li>
+          <li>Match <code>form-urlencoded</code> and <code>multipart</code> media types, ignoring params and case</li>
+          <li>Ensure we're not importing / exporting .git directory</li>
+          <li>Include xs:any and xs:group in generated request bodies</li>
+          <li>File cache on makes doesn't respect the ignored folders</li>
+          <li>…and 32 more</li>
+        </ul>
+      </description>
+    </release>
     <release version="v4.2.1" date="2026-09-30"></release>
     <release version="v4.2.0" date="2026-09-23"></release>
     <release version="v4.1.0" date="2026-08-20"></release>
