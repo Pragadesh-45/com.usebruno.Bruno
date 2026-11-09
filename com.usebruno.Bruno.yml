@@ -12,6 +12,8 @@ finish-args:
   - --share=ipc
   - --device=dri
   - --filesystem=home
+    # gh keeps its token in the system keyring by default
+  - --talk-name=org.freedesktop.secrets
     # required to fix cursor scaling on wayland, especially with fractional scaling
   - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
 modules:
@@ -47,12 +49,32 @@ modules:
         url: https://github.com/refi64/unappimage
         commit: d7f86f2a0d7ec3a69211125207d5f127386b849a
 
+  - name: gh
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 bin/gh -t "${FLATPAK_DEST}/bin"
+      - install -Dm644 LICENSE -t "${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/gh"
+    sources:
+      - type: archive
+        url: https://github.com/cli/cli/releases/download/v2.103.3/gh_2.103.3_linux_amd64.tar.gz
+        sha256: 4c806978ffce1cec70853302a56d70ac6da4f19bae7adca4e1a8ab00633dd91d
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/cli/cli/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          url-query: '"https://github.com/cli/cli/releases/download/v" + $version + "/gh_" + $version + "_linux_amd64.tar.gz"'
+
   - name: bruno
     buildsystem: simple
     sources:
       - type: script
         dest-filename: bruno
         commands:
+          # use the host gh login instead of the per-app config dir
+          - export GH_CONFIG_DIR="${GH_CONFIG_DIR:-${HOST_XDG_CONFIG_HOME:-$HOME/.config}/gh}"
+          # append the bundled gh as a git credential helper; host helpers such as /usr/local/bin/gh are kept but cannot run in the sandbox
+          - n="${GIT_CONFIG_COUNT:-0}"
+          - export "GIT_CONFIG_KEY_$n=credential.helper" "GIT_CONFIG_VALUE_$n=!/app/bin/gh auth git-credential" "GIT_CONFIG_COUNT=$((n + 1))"
           - zypak-wrapper.sh /app/extra/bruno/bruno --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations "$@"
 
       - type: extra-data
