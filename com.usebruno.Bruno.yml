@@ -72,9 +72,11 @@ modules:
         commands:
           # use the host gh login instead of the per-app config dir
           - export GH_CONFIG_DIR="${GH_CONFIG_DIR:-${HOST_XDG_CONFIG_HOME:-$HOME/.config}/gh}"
-          # append the bundled gh as a git credential helper; host helpers such as /usr/local/bin/gh are kept but cannot run in the sandbox
+          # use the bundled gh for github.com; the empty value drops the host's gh helper (e.g. /usr/bin/gh), which cannot run in the sandbox
           - n="${GIT_CONFIG_COUNT:-0}"
-          - export "GIT_CONFIG_KEY_$n=credential.helper" "GIT_CONFIG_VALUE_$n=!/app/bin/gh auth git-credential" "GIT_CONFIG_COUNT=$((n + 1))"
+          - export "GIT_CONFIG_KEY_$n=credential.https://github.com.helper" "GIT_CONFIG_VALUE_$n="
+          - export "GIT_CONFIG_KEY_$((n + 1))=credential.https://github.com.helper" "GIT_CONFIG_VALUE_$((n + 1))=!/app/bin/gh auth git-credential"
+          - export "GIT_CONFIG_COUNT=$((n + 2))"
           - zypak-wrapper.sh /app/extra/bruno/bruno --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations "$@"
 
       - type: extra-data
