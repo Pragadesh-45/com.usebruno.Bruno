@@ -1,0 +1,26 @@
+unsquashfs: only mark the extraction failed when lchown() on a symlink fails
+
+When run as root, create_inode() set FAILED after every symlink because the
+assignment sat outside the error branch, so unappimage exited 1 after a clean
+extraction. flatpak runs apply_extra as root for system installs.
+
+diff --git a/squashfs-tools/unsquashfs.c b/squashfs-tools/unsquashfs.c
+index 1491ba0e9e33..aa49b2c54c8a 100644
+--- a/squashfs-tools/unsquashfs.c
++++ b/squashfs-tools/unsquashfs.c
+@@ -1136,12 +1136,13 @@ int create_inode(char *pathname, struct inode *i)
+ 		write_xattr(pathname, i->xattr);
+ 
+ 		if(root_process) {
+-			if(lchown(pathname, i->uid, i->gid) == -1)
++			if(lchown(pathname, i->uid, i->gid) == -1) {
+ 				ERROR("create_inode: failed to change "
+ 				      "uid and gids on %s, because "
+ 				      "%s\n", pathname,
+ 				      strerror(errno));
+-			FAILED = TRUE;
++				FAILED = TRUE;
++			}
+ 		}
+ 
+ 		sym_count ++;
