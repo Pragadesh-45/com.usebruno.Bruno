@@ -41,11 +41,14 @@ modules:
     build-options:
       cflags: "-std=gnu89"
     build-commands:
-      - make -C squashfs-tools install INSTALL_DIR=/app/bin
+      - make -C squashfs-tools install INSTALL_DIR=/app/bin ZSTD_SUPPORT=1
     sources:
       - type: git
         url: https://github.com/refi64/unappimage
         commit: d7f86f2a0d7ec3a69211125207d5f127386b849a
+      # exit 0 on a clean extraction as root (system installs); see the patch header
+      - type: patch
+        path: unappimage-symlink-exit-code.patch
 
   - name: bruno
     buildsystem: simple
